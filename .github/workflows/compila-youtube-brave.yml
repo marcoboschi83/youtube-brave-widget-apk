@@ -20,11 +20,15 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Prepara Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Installa Android 35
-        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Installa Android SDK 35
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDKROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDKMGR="$(find "$SDKROOT/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          test -n "$SDKMGR"
+          echo "Uso SDK Android: $SDKROOT"
+          "$SDKMGR" --install "platforms;android-35" "build-tools;35.0.0"
 
       - name: Prepara Gradle 8.11.1
         uses: gradle/actions/setup-gradle@v4
